@@ -1,0 +1,15 @@
+{
+  "name": "ss_gs",
+  "version": "1.0.0",
+  "description": "SS Gameserver Remake",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "author": "GD",
+  "license": "",
+  "dependencies": {
+    "npm": "^7.17.0",
+    "ws": "^7.4.6"
+  }
+}
