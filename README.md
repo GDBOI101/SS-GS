@@ -1,5 +1,5 @@
 # SS-GS
-A remake of the websocket based https://shellshock.io Gameservers in Node.js
+A remake of the websocket based https://shellshock.io Gameservers and Services in Node.js
 
 # Disclaimer
-this is a very unfinished but working recreation of https://shellshock.io Game Servers.
+this is a very unfinished but working recreation of https://shellshock.io Game Servers/Services.
