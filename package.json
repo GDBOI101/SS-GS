@@ -7,9 +7,17 @@
     "start": "node ."
   },
   "author": "GD",
-  "license": "",
+  "license": "ISC",
   "dependencies": {
     "npm": "^7.17.0",
     "ws": "^7.4.6"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GDBOI101/SS-GS.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GDBOI101/SS-GS/issues"
+  },
+  "homepage": "https://github.com/GDBOI101/SS-GS#readme"
 }
