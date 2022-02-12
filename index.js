@@ -3,31 +3,35 @@ const PORT = process.env.PORT || 80;
 
 var PlayerCount = 0;
 
-let ut = function(e, t) {
+var Server = new WSS({ port: PORT }, () => {
+    console.log("Server Started!");
+});
+
+let ut = function (e, t) {
     this.size = 0,
-    this.originalSize = t,
-    this.constructorFn = e,
-    this.objects = [],
-    this.idx = 0,
-    this.numActive = 0,
-    this.expand(t)
+        this.originalSize = t,
+        this.constructorFn = e,
+        this.objects = [],
+        this.idx = 0,
+        this.numActive = 0,
+        this.expand(t)
 }
-ut.prototype.expand = function(e) {
+ut.prototype.expand = function (e) {
     for (var t = 0; t < e; t++) {
         var r = this.constructorFn();
         r.id = t + this.size,
-        r.active = !1,
-        this.objects.push(r)
+            r.active = !1,
+            this.objects.push(r)
     }
     this.size += e
 }
-ut.prototype.retrieve = function(e) {
+ut.prototype.retrieve = function (e) {
     if (null != e) {
-        for (; e >= this.size; )
+        for (; e >= this.size;)
             this.expand(this.originalSize);
         return this.numActive++,
-        this.objects[e].active = !0,
-        this.objects[e]
+            this.objects[e].active = !0,
+            this.objects[e]
     }
     var t = this.idx;
     do {
@@ -35,18 +39,18 @@ ut.prototype.retrieve = function(e) {
         var r = this.objects[t];
         if (!r.active)
             return this.idx = t,
-            this.numActive++,
-            r.active = !0,
-            r
-    } while (t != this.idx);return this.expand(this.originalSize),
-    console.log("Expanding pool for: " + this.objects[0].constructor.name + " to: " + this.size),
-    this.retrieve()
+                this.numActive++,
+                r.active = !0,
+                r
+    } while (t != this.idx); return this.expand(this.originalSize),
+        console.log("Expanding pool for: " + this.objects[0].constructor.name + " to: " + this.size),
+        this.retrieve()
 }
-ut.prototype.recycle = function(e) {
+ut.prototype.recycle = function (e) {
     e.active = !1,
-    this.numActive--
+        this.numActive--
 }
-ut.prototype.forEachActive = function(e) {
+ut.prototype.forEachActive = function (e) {
     for (var t = 0; t < this.size; t++) {
         var r = this.objects[t];
         !0 === r.active && e(r, t)
@@ -55,55 +59,55 @@ ut.prototype.forEachActive = function(e) {
 
 var Vt = {
     buffer: null,
-    bufferPool: new ut((function() {
+    bufferPool: new ut((function () {
         return new kt(2048)
     }
-    ),2),
-    getBuffer: function() {
+    ), 2),
+    getBuffer: function () {
         var e = this.bufferPool.retrieve();
         return e.idx = 0,
-        e
+            e
     }
 };
 function kt(e) {
     this.idx = 0,
-    this.arrayBuffer = new ArrayBuffer(e),
-    this.buffer = new Uint8Array(this.arrayBuffer,0,e)
+        this.arrayBuffer = new ArrayBuffer(e),
+        this.buffer = new Uint8Array(this.arrayBuffer, 0, e)
 }
-kt.prototype.send = function(e) {
-    var t = new Uint8Array(this.arrayBuffer,0,this.idx);
+kt.prototype.send = function (e) {
+    var t = new Uint8Array(this.arrayBuffer, 0, this.idx);
     e.send(t),
-    Vt.bufferPool.recycle(this)
+        Vt.bufferPool.recycle(this)
 }
-kt.prototype.packInt8 = function(e) {
+kt.prototype.packInt8 = function (e) {
     this.buffer[this.idx] = 255 & e,
-    this.idx++
+        this.idx++
 }
-kt.prototype.packInt16 = function(e) {
+kt.prototype.packInt16 = function (e) {
     this.buffer[this.idx] = 255 & e,
-    this.buffer[this.idx + 1] = e >> 8 & 255,
-    this.idx += 2
+        this.buffer[this.idx + 1] = e >> 8 & 255,
+        this.idx += 2
 }
-kt.prototype.packInt32 = function(e) {
+kt.prototype.packInt32 = function (e) {
     this.buffer[this.idx] = 255 & e,
-    this.buffer[this.idx + 1] = e >> 8 & 255,
-    this.buffer[this.idx + 2] = e >> 16 & 255,
-    this.buffer[this.idx + 3] = e >> 24 & 255,
-    this.idx += 4
+        this.buffer[this.idx + 1] = e >> 8 & 255,
+        this.buffer[this.idx + 2] = e >> 16 & 255,
+        this.buffer[this.idx + 3] = e >> 24 & 255,
+        this.idx += 4
 }
-kt.prototype.packRadU = function(e) {
+kt.prototype.packRadU = function (e) {
     this.packInt16(1e4 * e)
 }
-kt.prototype.packRad = function(e) {
+kt.prototype.packRad = function (e) {
     this.packInt16(1e4 * (e + Math.PI))
 }
-kt.prototype.packFloat = function(e) {
+kt.prototype.packFloat = function (e) {
     this.packInt16(300 * e)
 }
-kt.prototype.packDouble = function(e) {
+kt.prototype.packDouble = function (e) {
     this.packInt32(1e6 * e)
 }
-kt.prototype.packString = function(e) {
+kt.prototype.packString = function (e) {
     this.packInt8(e.length);
     for (var t = 0; t < e.length; t++)
         this.packInt16(e.charCodeAt(t))
@@ -171,58 +175,76 @@ var Utils = {
 function handleData(Data, ws) {
     Utils.init(Data)
     var cmd = Utils.unPackInt8U()
-    console.log("Command Num: " + cmd);
-    if(cmd == 1) {
+    if (cmd == 1) {
         //Add Player
-        let sendData = Vt.getBuffer()
-        sendData.packInt8(1)
-        sendData.packInt8(69);
-        sendData.packInt16(69420);
-        sendData.packString("SS-Modded") //New Player Name
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packFloat(3) //X
-        sendData.packFloat(3) //Y
-        sendData.packFloat(19) //Z
-        sendData.packFloat(3) //X
-        sendData.packFloat(3) //Y
-        sendData.packFloat(19) //Z
-        sendData.packRadU(0) //Yaw
-        sendData.packRadU(0) //Pitch
-        sendData.packInt32(0)
-        sendData.packInt16(5)
-        sendData.packInt16(0)
-        sendData.packInt16(20)
-        sendData.packInt32(25)
-        sendData.packInt32(0)
-        sendData.packInt16(69)
-        sendData.packInt16(420)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.packInt8(1)
-        sendData.send(ws);
+        Server.clients.forEach((client) => {
+            let sendData = Vt.getBuffer()
+            sendData.packInt8(1) //Command
+            sendData.packInt8(1) //Idk
+            sendData.packInt16(2); //Player Id or something?
+            sendData.packString("SS-Modded") //New Player Name
+            sendData.packInt8(1)
+            sendData.packInt8(1) //Team?
+            sendData.packInt8(1)// Weapon Id
+            sendData.packInt8(1) //Secondary Weapon Id
+            sendData.packInt8(2) //Shell Color?
+            sendData.packInt8(2) //Hat
+            sendData.packInt8(1) //Stamp
+            sendData.packInt8(2) //Grenade
+            sendData.packFloat(3) //X Loc
+            sendData.packFloat(3) //Y Loc
+            sendData.packFloat(13) //Z Loc
+            sendData.packFloat(3) //X Loc
+            sendData.packFloat(3) //Y Loc
+            sendData.packFloat(13) //Z Loc
+            sendData.packRad(0) //Yaw Rot
+            sendData.packRad(0) //Pitch Rot
+            sendData.packInt32(1) //Score
+            sendData.packInt16(2) //Kills
+            sendData.packInt16(1) //Deaths
+            sendData.packInt16(1) //Streak
+            sendData.packInt32(3) //Total Kills
+            sendData.packInt32(1) //Total Deaths
+            sendData.packInt16(4) //Best Game Streak?
+            sendData.packInt16(4) //Best Overall Streak?
+            sendData.packInt8(1) //Sheild
+            sendData.packInt8(2) //Health
+            sendData.packInt8(1) //Playing
+            sendData.packInt8(1) //Weapon Index
+            sendData.packInt8(0) //Control Keys?
+            sendData.packInt8(69) //Upgrade Id?
+            sendData.packInt8(3) // Active Shell Streaks?
+            sendData.packString("IDK") //Social?
+            sendData.send(client);
+        })
     }
-    if(cmd == 3) {
+    else if (cmd == 3) {
         //Rec Stuff
+        //var chatId = Utils.unPackInt8U()
         var Message = Utils.unPackString()
         console.log(Message);
         //Chat
-        let sendData = Vt.getBuffer()
-        sendData.packInt8(3)
-        sendData.packInt8(0)
-        sendData.packInt8(100)
-        sendData.packString(Message)
-        sendData.send(ws)
+        Server.clients.forEach((client) => {
+            if (client != ws) {
+                let sendData = Vt.getBuffer()
+                sendData.packInt8(3)
+                sendData.packInt8(69)
+                sendData.packString(Message)
+                sendData.send(client)
+            }
+        })
     }
-    if(cmd == 13) {
+    else if (cmd == 12) {
+        //Spawn Item
+        let sendData = Vt.getBuffer()
+        sendData.packInt8(12)
+        sendData.packInt16(1)
+        sendData.packInt8(1)
+        sendData.packFloat(3) //X?
+        sendData.packFloat(3) //Y?
+        sendData.packFloat(19) //Z?
+    }
+    else if (cmd == 13) {
         //Respawn
         let sendData = Vt.getBuffer()
         sendData.packInt8(13)
@@ -238,7 +260,7 @@ function handleData(Data, ws) {
         sendData.packInt8(69)
         sendData.send(ws);
     }
-    if(cmd == 15) { 
+    else if (cmd == 15) {
         //console.log(ws.PlayerName)
         //Join Game Req
         let sendData = Vt.getBuffer()
@@ -254,24 +276,88 @@ function handleData(Data, ws) {
         sendData.packInt16(420); //Team 1 Score
         sendData.packInt16(69); //Team 2 Score
         sendData.send(ws);
+
+        sendData = Vt.getBuffer()
+        sendData.packInt8(12)
+        sendData.packInt16(1)
+        sendData.packInt8(1)
+        sendData.packFloat(3) //X?
+        sendData.packFloat(3) //Y?
+        sendData.packFloat(19) //Z?
     }
-    if (cmd == 16) { 
+    else if (cmd == 16) {
         //Ping
         let sendData = Vt.getBuffer()
         sendData.packInt8(16); //Send a message back
         sendData.send(ws);
     }
-    if(cmd == 18) {
-        //TODO: Client Ready
+    else if (cmd == 18) {
+        //Add Player
+        Server.clients.forEach((client) => {
+            let sendData = Vt.getBuffer()
+            sendData.packInt8(1) //Command
+            sendData.packInt8(1) //Idk
+            sendData.packInt16(2); //Player Id or something?
+            sendData.packString("SS-Modded") //New Player Name
+            sendData.packInt8(0)
+            sendData.packInt8(1) //Team?
+            sendData.packInt8(1)// Weapon Id
+            sendData.packInt8(1) //Secondary Weapon Id
+            sendData.packInt8(2) //Shell Color?
+            sendData.packInt8(2) //Hat
+            sendData.packInt8(1) //Stamp
+            sendData.packInt8(2) //Grenade
+            sendData.packFloat(3) //X Loc
+            sendData.packFloat(3) //Y Loc
+            sendData.packFloat(13) //Z Loc
+            sendData.packFloat(3) //X Loc
+            sendData.packFloat(3) //Y Loc
+            sendData.packFloat(13) //Z Loc
+            sendData.packRad(0) //Yaw Rot
+            sendData.packRad(0) //Pitch Rot
+            sendData.packInt32(1) //Score
+            sendData.packInt16(2) //Kills
+            sendData.packInt16(1) //Deaths
+            sendData.packInt16(1) //Streak
+            sendData.packInt32(3) //Total Kills
+            sendData.packInt32(1) //Total Deaths
+            sendData.packInt16(4) //Best Game Streak?
+            sendData.packInt16(4) //Best Overall Streak?
+            sendData.packInt8(1) //Sheild
+            sendData.packInt8(2) //Health
+            sendData.packInt8(1) //Playing
+            sendData.packInt8(1) //Weapon Index
+            sendData.packInt8(0) //Control Keys?
+            sendData.packInt8(69) //Upgrade Id?
+            sendData.packInt8(0) // Active Shell Streaks?
+            sendData.packString("IDK") //Social?
+            sendData.send(client);
+        })
     }
-    if(cmd == 19) {
+    else if (cmd == 19) {
         //TODO: Request Respawn
+        //Prob wont work...
+        let sendData = Vt.getBuffer()
+        sendData.packInt8(13)
+        sendData.packInt8(5)
+        sendData.packInt16(0)
+        sendData.packFloat(3) //X
+        sendData.packFloat(3) //Y
+        sendData.packFloat(19) //Z
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.send(ws);
+    }
+    else if(cmd == 33) {
+        console.log("Nice Try...")
+    }
+    else {
+        console.log("Command: " + cmd)
     }
 }
-
-var Server = new WSS({ port: PORT }, () => {
-    console.log("Server Started!");
-});
 
 Server.on("connection", ws => {
     var PlayerIndex = PlayerCount;
