@@ -170,11 +170,12 @@ var Utils = {
 
 function handleData(Data, ws) {
     Utils.init(Data)
-    var cmd = Utils.unPackInt8()
+    var cmd = Utils.unPackInt8U()
     console.log("Command Num: " + cmd);
     if(cmd == 1) {
         //Add Player
         let sendData = Vt.getBuffer()
+        sendData.packInt8(1)
         sendData.packInt8(69);
         sendData.packInt16(69420);
         sendData.packString("SS-Modded") //New Player Name
@@ -209,9 +210,22 @@ function handleData(Data, ws) {
         sendData.packInt8(1)
         sendData.send(ws);
     }
+    if(cmd == 3) {
+        //Rec Stuff
+        var Message = Utils.unPackString()
+        console.log(Message);
+        //Chat
+        let sendData = Vt.getBuffer()
+        sendData.packInt8(3)
+        sendData.packInt8(0)
+        sendData.packInt8(100)
+        sendData.packString(Message)
+        sendData.send(ws)
+    }
     if(cmd == 13) {
         //Respawn
         let sendData = Vt.getBuffer()
+        sendData.packInt8(13)
         sendData.packInt8(5)
         sendData.packInt16(0)
         sendData.packFloat(3) //X
