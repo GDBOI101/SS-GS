@@ -170,26 +170,90 @@ var Utils = {
 
 function handleData(Data, ws) {
     Utils.init(Data)
-    var cmd = Utils.unPackInt8U()
+    var cmd = Utils.unPackInt8()
     console.log("Command Num: " + cmd);
+    if(cmd == 1) {
+        //Add Player
+        let sendData = Vt.getBuffer()
+        sendData.packInt8(69);
+        sendData.packInt16(69420);
+        sendData.packString("SS-Modded") //New Player Name
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packFloat(3) //X
+        sendData.packFloat(3) //Y
+        sendData.packFloat(19) //Z
+        sendData.packFloat(3) //X
+        sendData.packFloat(3) //Y
+        sendData.packFloat(19) //Z
+        sendData.packRadU(0) //Yaw
+        sendData.packRadU(0) //Pitch
+        sendData.packInt32(0)
+        sendData.packInt16(5)
+        sendData.packInt16(0)
+        sendData.packInt16(20)
+        sendData.packInt32(25)
+        sendData.packInt32(0)
+        sendData.packInt16(69)
+        sendData.packInt16(420)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.send(ws);
+    }
+    if(cmd == 13) {
+        //Respawn
+        let sendData = Vt.getBuffer()
+        sendData.packInt8(5)
+        sendData.packInt16(0)
+        sendData.packFloat(3) //X
+        sendData.packFloat(3) //Y
+        sendData.packFloat(19) //Z
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.packInt8(69)
+        sendData.send(ws);
+    }
     if(cmd == 15) { 
+        //console.log(ws.PlayerName)
         //Join Game Req
         let sendData = Vt.getBuffer()
-        sendData.packInt8(0);
+        sendData.packInt8(0); //Tell the client to join the game
+        sendData.packInt8(69); //Player ID ;)
+        sendData.packInt8(1); // Idk 1
+        sendData.packInt8(2); // Idk 2
+        sendData.packInt16(69); //Game code Part 1
+        sendData.packInt16(420); // Game code Part 2???
+        sendData.packInt8(3); // Idk3
+        sendData.packInt8(100); //Max Players/Player Limit
+        sendData.packInt8(2); // 1 or 2?
+        sendData.packInt16(420); //Team 1 Score
+        sendData.packInt16(69); //Team 2 Score
         sendData.send(ws);
     }
     if (cmd == 16) { 
         //Ping
         let sendData = Vt.getBuffer()
-        sendData.packInt8(16);
+        sendData.packInt8(16); //Send a message back
         sendData.send(ws);
     }
     if(cmd == 18) {
-        //Client Ready
+        //TODO: Client Ready
+    }
+    if(cmd == 19) {
+        //TODO: Request Respawn
     }
 }
-
-var GMsgIndex = 0;
 
 var Server = new WSS({ port: PORT }, () => {
     console.log("Server Started!");
@@ -197,7 +261,6 @@ var Server = new WSS({ port: PORT }, () => {
 
 Server.on("connection", ws => {
     var PlayerIndex = PlayerCount;
-    var MessageIndex = 0;
     console.log("New Connection!")
     ws.on("close", async (lol) => {
         console.log("Lost Connection. Index: " + PlayerIndex)
