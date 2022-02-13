@@ -176,13 +176,14 @@ function handleData(Data, ws) {
     Utils.init(Data)
     var cmd = Utils.unPackInt8U()
     if (cmd == 1) {
+        console.log("Add Player...")
         //Add Player
         Server.clients.forEach((client) => {
             let sendData = Vt.getBuffer()
             sendData.packInt8(1) //Command
             sendData.packInt8(1) //Idk
             sendData.packInt16(2); //Player Id or something?
-            sendData.packString("SS-Modded") //New Player Name
+            sendData.packString("GD2") //New Player Name
             sendData.packInt8(1)
             sendData.packInt8(1) //Team?
             sendData.packInt8(1)// Weapon Id
@@ -222,7 +223,7 @@ function handleData(Data, ws) {
         //Rec Stuff
         //var chatId = Utils.unPackInt8U()
         var Message = Utils.unPackString()
-        console.log(Message);
+        console.log("Sent Chat: " + Message);
         //Chat
         Server.clients.forEach((client) => {
             if (client != ws) {
@@ -235,6 +236,7 @@ function handleData(Data, ws) {
         })
     }
     else if (cmd == 12) {
+        console.log("Spawn Item")
         //Spawn Item
         let sendData = Vt.getBuffer()
         sendData.packInt8(12)
@@ -243,6 +245,7 @@ function handleData(Data, ws) {
         sendData.packFloat(3) //X?
         sendData.packFloat(3) //Y?
         sendData.packFloat(19) //Z?
+        sendData.send(ws)
     }
     else if (cmd == 13) {
         //Respawn
@@ -261,6 +264,7 @@ function handleData(Data, ws) {
         sendData.send(ws);
     }
     else if (cmd == 15) {
+        console.log("Join Game Requested...")
         //console.log(ws.PlayerName)
         //Join Game Req
         let sendData = Vt.getBuffer()
@@ -284,22 +288,26 @@ function handleData(Data, ws) {
         sendData.packFloat(3) //X?
         sendData.packFloat(3) //Y?
         sendData.packFloat(19) //Z?
+        sendData.send(ws)
     }
     else if (cmd == 16) {
+        console.log("Ping...")
         //Ping
         let sendData = Vt.getBuffer()
-        sendData.packInt8(16); //Send a message back
+        sendData.packInt8(17); //Send a message back
         sendData.send(ws);
+        console.log("Pong!")
     }
     else if (cmd == 18) {
+        console.log("Add Player...")
         //Add Player
         Server.clients.forEach((client) => {
             let sendData = Vt.getBuffer()
             sendData.packInt8(1) //Command
             sendData.packInt8(1) //Idk
-            sendData.packInt16(2); //Player Id or something?
-            sendData.packString("SS-Modded") //New Player Name
-            sendData.packInt8(0)
+            sendData.packInt16(1); //Player Id or something?
+            sendData.packString("GD2") //New Player Name
+            sendData.packInt8(1)
             sendData.packInt8(1) //Team?
             sendData.packInt8(1)// Weapon Id
             sendData.packInt8(1) //Secondary Weapon Id
@@ -329,18 +337,19 @@ function handleData(Data, ws) {
             sendData.packInt8(1) //Weapon Index
             sendData.packInt8(0) //Control Keys?
             sendData.packInt8(69) //Upgrade Id?
-            sendData.packInt8(0) // Active Shell Streaks?
-            sendData.packString("IDK") //Social?
+            sendData.packInt8(1) // Active Shell Streaks?
+            sendData.packString("GD2") //Social?
             sendData.send(client);
         })
     }
     else if (cmd == 19) {
+        console.log("Requested Respawn...")
         //TODO: Request Respawn
         //Prob wont work...
         let sendData = Vt.getBuffer()
         sendData.packInt8(13)
         sendData.packInt8(5)
-        sendData.packInt16(0)
+        sendData.packInt16(1)
         sendData.packFloat(3) //X
         sendData.packFloat(3) //Y
         sendData.packFloat(19) //Z
@@ -367,7 +376,7 @@ Server.on("connection", ws => {
     })
 
     ws.on("message", async (data) => {
-        console.log("Got Message: " + data);
+        //console.log("Got Message: " + data);
         handleData(data, ws);
     });
 })
