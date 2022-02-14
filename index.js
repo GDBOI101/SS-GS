@@ -172,6 +172,12 @@ var Utils = {
     }
 }
 
+function between(min, max) {  
+    return Math.floor(
+      Math.random() * (max - min) + min
+    )
+  }
+
 function handleData(Data, ws) {
     Utils.init(Data)
     var cmd = Utils.unPackInt8U()
@@ -306,7 +312,7 @@ function handleData(Data, ws) {
             sendData.packInt8(1) //Command
             sendData.packInt8(1) //Idk
             sendData.packInt16(1); //Player Id or something?
-            sendData.packString("GD2") //New Player Name
+            sendData.packString("SS-Modded" + between(1,100)) //New Player Name
             sendData.packInt8(1)
             sendData.packInt8(1) //Team?
             sendData.packInt8(1)// Weapon Id
