@@ -181,51 +181,7 @@ function between(min, max) {
 function handleData(Data, ws) {
     Utils.init(Data)
     var cmd = Utils.unPackInt8U()
-    if (cmd == 1) {
-        console.log("Add Player...")
-        //Add Player
-        Server.clients.forEach((client) => {
-            let sendData = Vt.getBuffer()
-            sendData.packInt8(1) //Command
-            sendData.packInt8(1) //Idk
-            sendData.packInt16(2); //Player Id or something?
-            sendData.packString("GD2") //New Player Name
-            sendData.packInt8(1)
-            sendData.packInt8(1) //Team?
-            sendData.packInt8(1)// Weapon Id
-            sendData.packInt8(1) //Secondary Weapon Id
-            sendData.packInt8(2) //Shell Color?
-            sendData.packInt8(2) //Hat
-            sendData.packInt8(1) //Stamp
-            sendData.packInt8(2) //Grenade
-            sendData.packFloat(3) //X Loc
-            sendData.packFloat(3) //Y Loc
-            sendData.packFloat(13) //Z Loc
-            sendData.packFloat(3) //X Loc
-            sendData.packFloat(3) //Y Loc
-            sendData.packFloat(13) //Z Loc
-            sendData.packRad(0) //Yaw Rot
-            sendData.packRad(0) //Pitch Rot
-            sendData.packInt32(1) //Score
-            sendData.packInt16(2) //Kills
-            sendData.packInt16(1) //Deaths
-            sendData.packInt16(1) //Streak
-            sendData.packInt32(3) //Total Kills
-            sendData.packInt32(1) //Total Deaths
-            sendData.packInt16(4) //Best Game Streak?
-            sendData.packInt16(4) //Best Overall Streak?
-            sendData.packInt8(1) //Sheild
-            sendData.packInt8(2) //Health
-            sendData.packInt8(1) //Playing
-            sendData.packInt8(1) //Weapon Index
-            sendData.packInt8(0) //Control Keys?
-            sendData.packInt8(69) //Upgrade Id?
-            sendData.packInt8(3) // Active Shell Streaks?
-            sendData.packString("IDK") //Social?
-            sendData.send(client);
-        })
-    }
-    else if (cmd == 3) {
+    if (cmd == 3) {
         //Rec Stuff
         //var chatId = Utils.unPackInt8U()
         var Message = Utils.unPackString()
@@ -300,7 +256,7 @@ function handleData(Data, ws) {
         console.log("Ping...")
         //Ping
         let sendData = Vt.getBuffer()
-        sendData.packInt8(17); //Send a message back
+        sendData.packInt8(16); //Send a message back
         sendData.send(ws);
         console.log("Pong!")
     }
