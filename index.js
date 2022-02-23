@@ -204,9 +204,9 @@ function handleData(Data, ws) {
         sendData.packInt8(12)
         sendData.packInt16(1)
         sendData.packInt8(1)
-        sendData.packFloat(3) //X?
-        sendData.packFloat(3) //Y?
-        sendData.packFloat(19) //Z?
+        sendData.packFloat(3.0) //X?
+        sendData.packFloat(3.0) //Y?
+        sendData.packFloat(19.0) //Z?
         sendData.send(ws)
     }
     else if (cmd == 13) {
@@ -215,9 +215,9 @@ function handleData(Data, ws) {
         sendData.packInt8(13)
         sendData.packInt8(5)
         sendData.packInt16(0)
-        sendData.packFloat(3) //X
-        sendData.packFloat(3) //Y
-        sendData.packFloat(19) //Z
+        sendData.packFloat(3.0) //X
+        sendData.packFloat(3.0) //Y
+        sendData.packFloat(19.0) //Z
         sendData.packInt8(69)
         sendData.packInt8(69)
         sendData.packInt8(69)
@@ -247,9 +247,9 @@ function handleData(Data, ws) {
         sendData.packInt8(12)
         sendData.packInt16(1)
         sendData.packInt8(1)
-        sendData.packFloat(3) //X?
-        sendData.packFloat(3) //Y?
-        sendData.packFloat(19) //Z?
+        sendData.packFloat(3.0) //X?
+        sendData.packFloat(3.0) //Y?
+        sendData.packFloat(19.0) //Z?
         sendData.send(ws)
     }
     else if (cmd == 16) {
@@ -277,12 +277,12 @@ function handleData(Data, ws) {
             sendData.packInt8(2) //Hat
             sendData.packInt8(1) //Stamp
             sendData.packInt8(2) //Grenade
-            sendData.packFloat(3) //X Loc
-            sendData.packFloat(3) //Y Loc
-            sendData.packFloat(13) //Z Loc
-            sendData.packFloat(3) //X Loc
-            sendData.packFloat(3) //Y Loc
-            sendData.packFloat(13) //Z Loc
+            sendData.packFloat(3.0) //X Loc
+            sendData.packFloat(3.0) //Y Loc
+            sendData.packFloat(19.0) //Z Loc
+            sendData.packFloat(3.0) //X Loc
+            sendData.packFloat(3.0) //Y Loc
+            sendData.packFloat(19.0) //Z Loc
             sendData.packRad(0) //Yaw Rot
             sendData.packRad(0) //Pitch Rot
             sendData.packInt32(1) //Score
@@ -312,9 +312,9 @@ function handleData(Data, ws) {
         sendData.packInt8(13)
         sendData.packInt8(5)
         sendData.packInt16(1)
-        sendData.packFloat(3) //X
-        sendData.packFloat(3) //Y
-        sendData.packFloat(19) //Z
+        sendData.packFloat(3.0) //X
+        sendData.packFloat(3.0) //Y
+        sendData.packFloat(19.0) //Z
         sendData.packInt8(69)
         sendData.packInt8(69)
         sendData.packInt8(69)
