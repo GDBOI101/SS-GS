@@ -230,19 +230,16 @@ function handleData(Data, ws) {
         //console.log(ws.PlayerName)
         //Join Game Req
         let sendData = Vt.getBuffer()
-        sendData.packInt8(0); //Tell the client to join the game
-        sendData.packInt8(69); //Player ID ;)
-        sendData.packInt8(1); // Idk 1
-        sendData.packInt8(2); // Idk 2
-        sendData.packInt16(69); //Game code Part 1
-        sendData.packInt16(420); // Game code Part 2???
-        sendData.packInt8(3); // Idk3
-        sendData.packInt8(100); //Max Players/Player Limit
-        sendData.packInt8(2); // 1 or 2?
-        sendData.packInt16(420); //Team 1 Score
-        sendData.packInt16(69); //Team 2 Score
+        sendData.packInt8(0);
+        sendData.packInt8(69);
+        sendData.packInt8(1);
+        sendData.packInt16(2);
+        sendData.packInt32(5);
+        sendData.packInt8(69);
+        sendData.packInt8(20);
+        sendData.packInt(1);
         sendData.send(ws);
-
+  
         sendData = Vt.getBuffer()
         sendData.packInt8(12)
         sendData.packInt16(1)
