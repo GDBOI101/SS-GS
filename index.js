@@ -237,7 +237,7 @@ function handleData(Data, ws) {
         sendData.packInt32(5);
         sendData.packInt8(69);
         sendData.packInt8(20);
-        sendData.packInt(1);
+        sendData.packInt8(1);
         sendData.send(ws);
   
         sendData = Vt.getBuffer()
