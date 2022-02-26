@@ -1,11 +1,32 @@
 const WSS = require("ws").Server;
 const PORT = process.env.PORT || 80;
-
+var Players = []
 var PlayerCount = 0;
-
+var PlayersInGame = 1;
 var Server = new WSS({ port: PORT }, () => {
     console.log("Server Started!");
 });
+
+class SSPlayer {
+    PlayerId = 0;
+    PlayerName = "";
+    Team = 0;
+
+    //Loc and Rot
+    X = 3.0;
+    Y = 3.0;
+    Z = 19.0;
+
+    YAW = 0;
+    PITCH = 0;
+
+    Init(Id, Name) {
+        this.PlayerId = Id;
+        this.PlayerName = Name;
+        Players.push(this)
+        console.log("Started Player: " + Name)
+    }
+}
 
 let ut = function (e, t) {
     this.size = 0,
@@ -172,18 +193,17 @@ var Utils = {
     }
 }
 
-function between(min, max) {  
+function between(min, max) {
     return Math.floor(
-      Math.random() * (max - min) + min
+        Math.random() * (max - min) + min
     )
-  }
+}
 
 function handleData(Data, ws) {
     Utils.init(Data)
     var cmd = Utils.unPackInt8U()
     if (cmd == 3) {
         //Rec Stuff
-        //var chatId = Utils.unPackInt8U()
         var Message = Utils.unPackString()
         console.log("Sent Chat: " + Message);
         //Chat
@@ -209,48 +229,50 @@ function handleData(Data, ws) {
         sendData.packFloat(19.0) //Z?
         sendData.send(ws)
     }
-    else if (cmd == 13) {
-        //Respawn
-        let sendData = Vt.getBuffer()
-        sendData.packInt8(13)
-        sendData.packInt8(5)
-        sendData.packInt16(0)
-        sendData.packFloat(3.0) //X
-        sendData.packFloat(3.0) //Y
-        sendData.packFloat(19.0) //Z
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.send(ws);
-    }
     else if (cmd == 15) {
         console.log("Join Game Requested...")
         //console.log(ws.PlayerName)
-        //Join Game Req
-        let sendData = Vt.getBuffer()
+        //Read Data
+        Utils.unPackInt8()
+        Utils.unPackInt8()
+        Utils.unPackInt8()
+        Utils.unPackInt8()
+        Utils.unPackInt16()
+        Utils.unPackInt32()
+        Utils.unPackInt8()
+        Utils.unPackInt16()
+        Utils.unPackInt16()
+        Utils.unPackInt8()
+        Utils.unPackInt16()
+        Utils.unPackInt16()
+        Utils.unPackInt16()
+        var Name = Utils.unPackString();
+        Utils.unPackInt32()
+        Utils.unPackString()
+        var NewPlr = new SSPlayer();
+        NewPlr.Init(PlayersInGame, Name);
+        PlayersInGame++;
+        //Accept Join Game Req
+        let sendData = Vt.getBuffer();
         sendData.packInt8(0); //Tell the client to join the game
         sendData.packInt8(69); //Player ID ;)
-        sendData.packInt8(1); // Idk 1
-        sendData.packInt8(2); // Idk 2
+        sendData.packInt8(2); // Idk 1
+        sendData.packInt8(1); // Idk 2
         sendData.packInt16(69); //Game code Part 1
-        sendData.packInt16(420); // Game code Part 2???
-        sendData.packInt8(3); // Idk3
+        sendData.packInt32(2); // Idk 3
+        sendData.packInt8(2); // Idk 4
         sendData.packInt8(100); //Max Players/Player Limit
         sendData.packInt8(2); // 1 or 2?
-        sendData.packInt16(420); //Team 1 Score
-        sendData.packInt16(69); //Team 2 Score
         sendData.send(ws);
 
-        sendData = Vt.getBuffer()
-        sendData.packInt8(12)
-        sendData.packInt16(1)
-        sendData.packInt8(1)
-        sendData.packFloat(3.0) //X?
-        sendData.packFloat(3.0) //Y?
-        sendData.packFloat(19.0) //Z?
-        sendData.send(ws)
+        let sendData2 = Vt.getBuffer()
+        sendData2.packInt8(12)
+        sendData2.packInt16(1)
+        sendData2.packInt8(1)
+        sendData2.packFloat(3.0) //X?
+        sendData2.packFloat(3.0) //Y?
+        sendData2.packFloat(19.0) //Z?
+        sendData2.send(ws)
     }
     else if (cmd == 16) {
         console.log("Ping...")
@@ -261,47 +283,49 @@ function handleData(Data, ws) {
         console.log("Pong!")
     }
     else if (cmd == 18) {
-        console.log("Add Player...")
-        //Add Player
+        console.log("Client Ready...")
+        let sendData = Vt.getBuffer()
+        sendData.packInt8(18)
+        sendData.send(ws);
+
+        console.log("Adding Player...")
         Server.clients.forEach((client) => {
+            var Plr = Players[PlayersInGame - 2];
             let sendData = Vt.getBuffer()
-            sendData.packInt8(1) //Command
-            sendData.packInt8(1) //Idk
-            sendData.packInt16(1); //Player Id or something?
-            sendData.packString("SS-Modded" + between(1,100)) //New Player Name
-            sendData.packInt8(1)
-            sendData.packInt8(1) //Team?
-            sendData.packInt8(1)// Weapon Id
-            sendData.packInt8(1) //Secondary Weapon Id
-            sendData.packInt8(2) //Shell Color?
-            sendData.packInt8(2) //Hat
-            sendData.packInt8(1) //Stamp
-            sendData.packInt8(2) //Grenade
-            sendData.packFloat(3.0) //X Loc
-            sendData.packFloat(3.0) //Y Loc
-            sendData.packFloat(19.0) //Z Loc
-            sendData.packFloat(3.0) //X Loc
-            sendData.packFloat(3.0) //Y Loc
-            sendData.packFloat(19.0) //Z Loc
-            sendData.packRad(0) //Yaw Rot
-            sendData.packRad(0) //Pitch Rot
-            sendData.packInt32(1) //Score
+            sendData.packInt8(Plr.PlayerId)
+            sendData.packInt16(Plr.PlayerId*2); //IDK
+            sendData.packString(Plr.PlayerName);
+            sendData.packInt8(Plr.PlayerId % 2 == 0 ? 1 : 2) //Even Teams :)
+            sendData.packInt8(1) //Primary Weapon
+            sendData.packInt8(1) //Secondary Weapon
+            sendData.packInt8(1) //Egg Color
+            sendData.packInt8(1) //Hat
+            sendData.packInt8(1) //Stamp/Face
+            sendData.packFloat(3.0) //X
+            sendData.packFloat(3.0) //Y
+            sendData.packFloat(19.0) //Z
+            sendData.packFloat(3.0) //X
+            sendData.packFloat(3.0) //Y
+            sendData.packFloat(19.0) //Z
+
+            sendData.packRad(0) //YAW
+            sendData.packRad(0) //PITCH
+
+            sendData.packInt32(1) //Score?
             sendData.packInt16(2) //Kills
             sendData.packInt16(1) //Deaths
-            sendData.packInt16(1) //Streak
-            sendData.packInt32(3) //Total Kills
-            sendData.packInt32(1) //Total Deaths
-            sendData.packInt16(4) //Best Game Streak?
-            sendData.packInt16(4) //Best Overall Streak?
+            sendData.packInt16(2) //Streak?
+            sendData.packInt32(3) //Total Kills?
+            sendData.packInt32(2) //Total Deaths
+            sendData.packInt16(69) //Best Game Streak
+            sendData.packInt16(69) //Best Overall Streak
             sendData.packInt8(1) //Sheild
-            sendData.packInt8(2) //Health
-            sendData.packInt8(1) //Playing
-            sendData.packInt8(1) //Weapon Index
-            sendData.packInt8(0) //Control Keys?
-            sendData.packInt8(69) //Upgrade Id?
-            sendData.packInt8(1) // Active Shell Streaks?
-            sendData.packString("GD2") //Social?
-            sendData.send(client);
+            sendData.packInt8(1) //Hp
+            sendData.packInt8(1) //Is Playing?
+            sendData.packInt8(1) //Weapon Index?
+            sendData.packInt8(1) //Control keys??? WTF?
+            sendData.packInt8(1) //Upgrade Product ID (i thinbk its for vip)
+            sendData.send(client)
         })
     }
     else if (cmd == 19) {
@@ -310,7 +334,7 @@ function handleData(Data, ws) {
         //Prob wont work...
         let sendData = Vt.getBuffer()
         sendData.packInt8(13)
-        sendData.packInt8(5)
+        sendData.packInt8(69)
         sendData.packInt16(1)
         sendData.packFloat(3.0) //X
         sendData.packFloat(3.0) //Y
@@ -322,7 +346,7 @@ function handleData(Data, ws) {
         sendData.packInt8(69)
         sendData.send(ws);
     }
-    else if(cmd == 33) {
+    else if (cmd == 33) {
         console.log("Nice Try...")
     }
     else {
@@ -334,7 +358,7 @@ Server.on("connection", ws => {
     var PlayerIndex = PlayerCount;
     console.log("New Connection!")
     ws.on("close", async (lol) => {
-        console.log("Lost Connection. Index: " + PlayerIndex)
+        console.log("Lost Connection...")
     })
 
     ws.on("message", async (data) => {
