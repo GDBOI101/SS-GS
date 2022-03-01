@@ -292,41 +292,48 @@ function handleData(Data, ws) {
         Server.clients.forEach((client) => {
             var Plr = Players[PlayersInGame - 2];
             let sendData = Vt.getBuffer()
-            sendData.packInt8(Plr.PlayerId)
-            sendData.packInt16(Plr.PlayerId*2); //IDK
-            sendData.packString(Plr.PlayerName);
-            sendData.packInt8(Plr.PlayerId % 2 == 0 ? 1 : 2) //Even Teams :)
-            sendData.packInt8(1) //Primary Weapon
-            sendData.packInt8(1) //Secondary Weapon
-            sendData.packInt8(1) //Egg Color
-            sendData.packInt8(1) //Hat
-            sendData.packInt8(1) //Stamp/Face
-            sendData.packFloat(3.0) //X
-            sendData.packFloat(3.0) //Y
-            sendData.packFloat(19.0) //Z
-            sendData.packFloat(3.0) //X
-            sendData.packFloat(3.0) //Y
-            sendData.packFloat(19.0) //Z
-
-            sendData.packRad(0) //YAW
-            sendData.packRad(0) //PITCH
-
-            sendData.packInt32(1) //Score?
+            sendData.packInt8(1) //Command
+            sendData.packInt8(1) //Idk
+            sendData.packInt16(Plr.PlayerId); //Player Id or something?
+            sendData.packString(Plr.PlayerName) //New Player Name
+            sendData.packInt8(1)
+            sendData.packInt8(1) //Team?
+            sendData.packInt8(1)// Weapon Id
+            sendData.packInt8(1) //Secondary Weapon Id
+            sendData.packInt8(2) //Shell Color?
+            sendData.packInt8(2) //Hat
+            sendData.packInt8(1) //Stamp
+            sendData.packInt8(2) //Grenade
+            sendData.packFloat(3) //X Loc
+            sendData.packFloat(3) //Y Loc
+            sendData.packFloat(19) //Z Loc
+            sendData.packFloat(3) //X Loc
+            sendData.packFloat(3) //Y Loc
+            sendData.packFloat(19) //Z Loc
+            sendData.packRad(1) //Yaw Rot
+            sendData.packRad(1) //Pitch Rot
+            sendData.packInt32(1) //Score
             sendData.packInt16(2) //Kills
             sendData.packInt16(1) //Deaths
-            sendData.packInt16(2) //Streak?
-            sendData.packInt32(3) //Total Kills?
-            sendData.packInt32(2) //Total Deaths
-            sendData.packInt16(69) //Best Game Streak
-            sendData.packInt16(69) //Best Overall Streak
+            sendData.packInt16(1) //Streak
+            sendData.packInt32(3) //Total Kills
+            sendData.packInt32(1) //Total Deaths
+            sendData.packInt16(4) //Best Game Streak?
+            sendData.packInt16(4) //Best Overall Streak?
             sendData.packInt8(1) //Sheild
-            sendData.packInt8(1) //Hp
-            sendData.packInt8(1) //Is Playing?
-            sendData.packInt8(1) //Weapon Index?
-            sendData.packInt8(1) //Control keys??? WTF?
-            sendData.packInt8(1) //Upgrade Product ID (i thinbk its for vip)
-            sendData.send(client)
+            sendData.packInt8(2) //Health
+            sendData.packInt8(1) //Playing
+            sendData.packInt8(1) //Weapon Index
+            sendData.packInt8(1) //Control Keys?
+            sendData.packInt8(69) //Upgrade Id?
+            sendData.packInt8(1) // Active Shell Streaks?
+            sendData.packString("IDK") //Social?
+            sendData.send(client);
         })
+
+        let sendData3 = Vt.getBuffer();
+        sendData3.packInt8(39)
+        sendData3.send(ws)
     }
     else if (cmd == 19) {
         console.log("Requested Respawn...")
@@ -334,16 +341,15 @@ function handleData(Data, ws) {
         //Prob wont work...
         let sendData = Vt.getBuffer()
         sendData.packInt8(13)
-        sendData.packInt8(69)
         sendData.packInt16(1)
         sendData.packFloat(3.0) //X
         sendData.packFloat(3.0) //Y
         sendData.packFloat(19.0) //Z
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.packInt8(69)
-        sendData.packInt8(69)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
+        sendData.packInt8(1)
         sendData.send(ws);
     }
     else if (cmd == 33) {
