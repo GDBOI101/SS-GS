@@ -290,12 +290,11 @@ function handleData(Data, ws) {
 
         console.log("Adding Player...")
         Server.clients.forEach((client) => {
-            var Plr = Players[PlayersInGame - 2];
             let sendData = Vt.getBuffer()
             sendData.packInt8(1) //Command
             sendData.packInt8(1) //Idk
-            sendData.packInt16(Plr.PlayerId); //Player Id or something?
-            sendData.packString(Plr.PlayerName) //New Player Name
+            sendData.packInt16(1); //Player Id or something?
+            sendData.packString("SS-GS") //New Player Name
             sendData.packInt8(1)
             sendData.packInt8(1) //Team?
             sendData.packInt8(1)// Weapon Id
