@@ -2,8 +2,7 @@
 A remake of the websocket based https://shellshock.io Gameservers in Node.js
 
 # Disclaimers
-This is a very unfinished but working recreation of https://shellshock.io Game Servers.
-<br>
+This is a very unfinished but somewhat working recreation of https://shellshock.io Game Servers.
 <br>
 This Project was made for Educational Purposes only! This Project is also not Connected to or Endorsed by Blue Wizards Digital!
 
