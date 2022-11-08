@@ -58,3 +58,56 @@ playerCount: 25 (Most likely a client request to ask for the Player Count)
 pause: 26 (Unknown)
 <br>
 announcement: 27 (Sends a request to the Client asking to Update the Announcement Text)
+<br>
+updateBalance: 28 (Unknown)
+<br>
+reload: 29 (Most likely sends a server request to reload)
+<br>
+refreshGameState: 30 (Unknown)
+<br>
+switchTeamFail: 31 (Most likely sent to the Client when a team switch request fails)
+<br>
+expireUpgrade: 32 (Unknown)
+<br>
+bootPlayer: 33 (Sends a request from the Client that tells the Server to Kick a Player)
+<br>
+loginRequired: 34 (Unknown)
+<br>
+banned: 35 (Some sort of Ban Message sent from the Server)
+<br>
+gameLocked: 36 (Unknown)
+<br>
+metaGameState: 39 (Unknown)
+<br>
+syncMe: 40 (Unknown)
+<br>
+explode: 41 (Most likely triggers an explosion effect for the Player Death)
+<br>
+keepAlive: 42 (Unknown)
+<br>
+musicInfo: 43 (Unknown)
+<br>
+hitMeHardBoiled: 44 (Something to do with the Hard Boiled buff)
+<Br>
+beginShellStreak: 45 (Starts a shell streak)
+<br>
+endShellStreak: 46 (Ends a shell streak)
+<br>
+startReload: 47 (Starts reloading)
+<br>
+fire: 48 (Most likely a message to shoot a weapon)
+<br>
+throwGrenade: 49 (Most likely Sends a request to the server to throw a grenade)
+<br>
+info: 50 (Unknown)
+<br>
+videoReward: 51 (Most likely plays an ad and/or grants the reward for doing so)
+<br>
+eventModifier: 52 (Unknown)
+
+# Comm Code Info
+Documentation on the Received or Sent Data Types and Order
+
+# Client
+
+# Server
