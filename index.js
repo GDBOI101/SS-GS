@@ -1,10 +1,11 @@
 const WSS = require("ws").Server;
 const PORT = process.env.PORT || 80;
+const { warn, log } = require('console');
 var Players = []
 var PlayerCount = 0;
 var PlayersInGame = 1;
 var Server = new WSS({ port: PORT }, () => {
-    console.log("Server Started!");
+    log("Server Started!");
 });
 
 class SSPlayer {
@@ -24,7 +25,7 @@ class SSPlayer {
         this.PlayerId = Id;
         this.PlayerName = Name;
         Players.push(this)
-        console.log("Started Player: " + Name)
+        log("Started Player: " + Name)
     }
 }
 
@@ -64,7 +65,7 @@ ut.prototype.retrieve = function (e) {
                 r.active = !0,
                 r
     } while (t != this.idx); return this.expand(this.originalSize),
-        console.log("Expanding pool for: " + this.objects[0].constructor.name + " to: " + this.size),
+        log("Expanding pool for: " + this.objects[0].constructor.name + " to: " + this.size),
         this.retrieve()
 }
 ut.prototype.recycle = function (e) {
@@ -205,7 +206,7 @@ function handleData(Data, ws) {
     if (cmd == 3) {
         //Rec Stuff
         var Message = Utils.unPackString()
-        console.log("Sent Chat: " + Message);
+        log("Sent Chat: " + Message);
         //Chat
         Server.clients.forEach((client) => {
             if (client != ws) {
@@ -218,7 +219,7 @@ function handleData(Data, ws) {
         })
     }
     else if (cmd == 12) {
-        console.log("Spawn Item")
+        log("Spawn Item")
         //Spawn Item
         let sendData = Vt.getBuffer()
         sendData.packInt8(12)
@@ -230,8 +231,8 @@ function handleData(Data, ws) {
         sendData.send(ws)
     }
     else if (cmd == 15) {
-        console.log("Join Game Requested...")
-        //console.log(ws.PlayerName)
+        log("Join Game Requested...")
+        //log(ws.PlayerName)
         //Read Data
         Utils.unPackInt8()
         Utils.unPackInt8()
@@ -275,20 +276,20 @@ function handleData(Data, ws) {
         sendData2.send(ws)
     }
     else if (cmd == 16) {
-        console.log("Ping...")
+        log("Ping...")
         //Ping
         let sendData = Vt.getBuffer()
         sendData.packInt8(16); //Send a message back
         sendData.send(ws);
-        console.log("Pong!")
+        log("Pong!")
     }
     else if (cmd == 18) {
-        console.log("Client Ready...")
+        log("Client Ready...")
         let sendData = Vt.getBuffer()
         sendData.packInt8(18)
         sendData.send(ws);
 
-        console.log("Adding Player...")
+        log("Adding Player...")
         Server.clients.forEach((client) => {
             let sendData = Vt.getBuffer()
             sendData.packInt8(1) //Command
@@ -335,7 +336,7 @@ function handleData(Data, ws) {
         sendData3.send(ws)
     }
     else if (cmd == 19) {
-        console.log("Requested Respawn...")
+        log("Requested Respawn...")
         //TODO: Request Respawn
         //Prob wont work...
         let sendData = Vt.getBuffer()
@@ -352,22 +353,22 @@ function handleData(Data, ws) {
         sendData.send(ws);
     }
     else if (cmd == 33) {
-        console.log("Nice Try...")
+        log("Nice Try...")
     }
     else {
-        console.log("Command: " + cmd)
+        log("Command: " + cmd)
     }
 }
 
 Server.on("connection", ws => {
     var PlayerIndex = PlayerCount;
-    console.log("New Connection!")
+    log("New Connection!")
     ws.on("close", async (lol) => {
-        console.log("Lost Connection...")
+        log("Lost Connection...")
     })
 
     ws.on("message", async (data) => {
-        //console.log("Got Message: " + data);
+        //log("Got Message: " + data);
         handleData(data, ws);
     });
 })
