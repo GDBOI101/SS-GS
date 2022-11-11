@@ -9,7 +9,7 @@
   "author": "GD",
   "license": "ISC",
   "dependencies": {
-    "npm": "^7.17.0",
+    "npm": "^9.1.1",
     "ws": "^7.4.6"
   },
   "repository": {
