@@ -1,6 +1,7 @@
 const WSS = require("ws").Server;
 const PORT = process.env.PORT || 1234;
 const { warn, log } = require('console');
+var PlayerCount = 0;
 
 var Server = new WSS({ port: PORT }, () => {
     log("Server Started!");
@@ -267,7 +268,7 @@ function handleData(Data, ws) {
             if (client != ws) {
                 let sendData = Vt.getBuffer()
                 sendData.packInt8(3)
-                sendData.packInt8(69)
+                sendData.packInt8(ws.PlayerIdx)
                 sendData.packString(Message)
                 sendData.send(client)
             }
@@ -292,6 +293,8 @@ function handleData(Data, ws) {
     }
     else if (cmd == 15) {
         log("Join Game Requested...")
+        ws.PlayerIdx = PlayerCount++;
+        ws.Team = (ws.PlayerIdx % 2 == 0)? 1 : 2;
         Utils.unPackInt8U();
         Utils.unPackInt8U();
         var GameType = Utils.unPackInt8U();
@@ -311,8 +314,8 @@ function handleData(Data, ws) {
         //Accept Join Game Req
         let sendData2 = Vt.getBuffer();
         sendData2.packInt8(0); //Tell the client to join the game
-        sendData2.packInt8(1); //Player ID ;)
-        sendData2.packInt8(1); // Team
+        sendData2.packInt8(ws.PlayerIdx); //Player ID ;)
+        sendData2.packInt8(ws.Team); // Team
         sendData2.packInt8(GameType); // GameType
         sendData2.packInt16(1); //Idk
         sendData2.packInt32(1); // Idk2
@@ -334,11 +337,11 @@ function handleData(Data, ws) {
         Server.clients.forEach((client) => {
             let sendData = Vt.getBuffer()
             sendData.packInt8(1) //Command
-            sendData.packInt8(1) //Player Id
-            sendData.packInt16(1); //uniqueId
+            sendData.packInt8(ws.PlayerIdx) //Player Id
+            sendData.packInt16(ws.PlayerIdx); //uniqueId
             sendData.packString("[SS-GS] " + ws.PlayerName) //New Player Name
             sendData.packInt8(ws.ClassIdx) //Class?
-            sendData.packInt8(1) //Team
+            sendData.packInt8(ws.Team) //Team
             sendData.packInt8(ws.P_WID)// Weapon Id
             sendData.packInt8(ws.S_WID) //Secondary Weapon Id
             sendData.packInt8(ws.Color) //Shell Color?
@@ -371,6 +374,46 @@ function handleData(Data, ws) {
             //sendData.packInt8(0) // Active Shell Streaks?
             sendData.packLongString("{'active': false'}") //Social?
             sendData.send(client);
+
+            let sendData2 = Vt.getBuffer()
+            sendData2.packInt8(1) //Command
+            sendData2.packInt8(client.PlayerIdx) //Player Id
+            sendData2.packInt16(client.PlayerIdx); //uniqueId
+            sendData2.packString("[SS-GS] " + client.PlayerName) //New Player Name
+            sendData2.packInt8(client.ClassIdx) //Class?
+            sendData2.packInt8(client.Team) //Team
+            sendData2.packInt8(client.P_WID)// Weapon Id
+            sendData2.packInt8(client.S_WID) //Secondary Weapon Id
+            sendData2.packInt8(client.Color) //Shell Color?
+            sendData2.packInt8(client.Hat) //Hat
+            sendData2.packInt8(client.Stamp) //Stamp
+            sendData2.packInt8(client.Grenade) //Grenade
+            sendData2.packFloat(3.0) //X Loc
+            sendData2.packFloat(3.0) //Y Loc
+            sendData2.packFloat(19.0) //Z Loc
+            sendData2.packFloat(3.0) //X Loc
+            sendData2.packFloat(3.0) //Y Loc
+            sendData2.packFloat(19.0) //Z Loc
+            sendData2.packRad(0) //Yaw Rot
+            sendData2.packRad(0) //Pitch Rot
+            sendData2.packInt32(1) //Score
+            sendData2.packInt16(1) //Kills
+            sendData2.packInt16(1) //Deaths
+            sendData2.packInt16(0) //Streak
+            sendData2.packInt32(3) //Total Kills
+            sendData2.packInt32(1) //Total Deaths
+            sendData2.packInt16(0) //Best Game Streak?
+            sendData2.packInt16(0) //Best Overall Streak?
+            sendData2.packInt8(0) //Shield
+            sendData2.packInt8(100) //Health
+            sendData2.packInt8(1) //Playing
+            sendData2.packInt8(1) //Weapon Index
+            sendData2.packInt8(1) //Control Keys?
+            sendData2.packInt8(1) //Upgrade Id?
+            //Line below causes the client to crash
+            //sendData.packInt8(0) // Active Shell Streaks?
+            sendData2.packLongString("{'active': false'}") //Social?
+            sendData2.send(ws);
         })
         //Client Ready
         let sendData3 = Vt.getBuffer()
@@ -382,7 +425,7 @@ function handleData(Data, ws) {
         //Request Respawn
         let sendData = Vt.getBuffer()
         sendData.packInt8(13)
-        sendData.packInt8(1)
+        sendData.packInt8(ws.PlayerIdx)
         sendData.packInt16(1) //Speed (Idk what this does)
         //These coords dont seem to apply.
         sendData.packFloat(3.0) //X
@@ -404,7 +447,7 @@ function handleData(Data, ws) {
         //Kill the Player
         let sendData = Vt.getBuffer();
         sendData.packInt8(1) //idk
-        sendData.packInt8(1) //Id?
+        sendData.packInt8(ws.PlayerIdx) //Id?
         sendData.packInt8(3) //Respawn time
         sendData.send(ws)
     }
@@ -412,7 +455,7 @@ function handleData(Data, ws) {
         //Reload
         let sendData = Vt.getBuffer();
         sendData.packInt8(29);
-        sendData.packInt8(1);
+        sendData.packInt8(ws.PlayerIdx);
         sendData.send(ws);
     }
     else if (cmd == 30) {
@@ -429,7 +472,7 @@ function handleData(Data, ws) {
         //Reload
         let sendData = Vt.getBuffer();
         sendData.packInt8(29);
-        sendData.packInt8(1);
+        sendData.packInt8(ws.PlayerIdx);
         sendData.send(ws);
     }
     else {
