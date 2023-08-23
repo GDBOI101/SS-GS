@@ -294,7 +294,7 @@ function handleData(Data, ws) {
     else if (cmd == 15) {
         log("Join Game Requested...")
         ws.PlayerIdx = PlayerCount++;
-        ws.Team = (ws.PlayerIdx % 2 == 0)? 1 : 2;
+        ws.Team = (ws.PlayerIdx % 2 == 0) ? 1 : 2;
         Utils.unPackInt8U();
         Utils.unPackInt8U();
         var GameType = Utils.unPackInt8U();
@@ -321,7 +321,7 @@ function handleData(Data, ws) {
         sendData2.packInt32(1); // Idk2
         sendData2.packInt8(2); // Map (Defaults to Blender)
         sendData2.packInt8(10); //Max Players/Player Limit
-        sendData2.packInt8(1); //Is owner
+        sendData2.packInt8(ws.PlayerIdx == 1); //Is owner
         sendData2.send(ws);
     }
     else if (cmd == 16) {
@@ -412,7 +412,7 @@ function handleData(Data, ws) {
             sendData2.packInt8(1) //Upgrade Id?
             //Line below causes the client to crash
             //sendData.packInt8(0) // Active Shell Streaks?
-            sendData2.packLongString("{'active': false'}") //Social?
+            sendData2.packLongString("{'active': true'}") //Social?
             sendData2.send(ws);
         })
         //Client Ready
@@ -439,7 +439,7 @@ function handleData(Data, ws) {
         sendData.send(ws);
     }
     else if (cmd == 24) {
-        ws.ClassIdx = Utils.unPackInt8U()
+        ws.ClassIdx = Utils.unPackInt8U();
         log(ws.PlayerName + " Switched Weapon Class to: " + GetWeaponClassName(ws.ClassIdx));
     }
     else if (cmd == 26) {
@@ -463,7 +463,13 @@ function handleData(Data, ws) {
     }
     else if (cmd == 33) {
         //Kick Player
-        log("Nice Try...")
+        var playerId = Utils.unPackInt8();
+        Server.clients.forEach((client) => {
+            if (client.PlayerIdx == playerId) {
+                console.log("Kicked Player: " + client.PlayerName)
+                client.close(1001, "Kicked");
+            }
+        });
     }
     else if (cmd == 38) {
         //Ban? Ignore ig

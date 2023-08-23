@@ -9,7 +9,7 @@ addPlayer: 1 (Called when a Player is ready to be added)
 <br>
 removePlayer: 2 (I'm assuming this is called when a player is supposed to be removed)
 <br>
-chat: 3 (Called when a chat message is sent
+chat: 3 (Called when a chat message is sent)
 <br>
 controlKeys: 4 (Unknown)
 <br>
