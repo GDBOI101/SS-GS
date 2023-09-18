@@ -6,7 +6,9 @@ This WILL NOT work with the latest shellshockers client. This was made for an ol
 <br>
 This is a very unfinished but working recreation of https://shellshock.io Game Servers.
 <br>
-This Project was made for Educational Purposes only! This Project is also not Connected to or Endorsed by Blue Wizards Digital!
+This Project was made for Educational Purposes only! 
+<br>
+This Project is also not Connected to or Endorsed by Blue Wizards Digital!
 
 # Todo
 Fix for latest shellshockers client
