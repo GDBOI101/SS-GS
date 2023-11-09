@@ -4,7 +4,8 @@
   "description": "SS Gameserver Remake",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "build": "node .",
+    "test": "node ."
   },
   "author": "GD",
   "license": "ISC",
