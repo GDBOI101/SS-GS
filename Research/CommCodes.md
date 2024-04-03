@@ -55,7 +55,7 @@ changeCharacter: 24 (Unknown)
 <br>
 playerCount: 25 (Most likely a client request to ask for the Player Count)
 <br>
-pause: 26 (Unknown)
+pause: 26 Client pausing the game
 <br>
 announcement: 27 (Sends a request to the Client asking to Update the Announcement Text)
 <br>
